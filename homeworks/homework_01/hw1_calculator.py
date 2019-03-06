@@ -11,7 +11,8 @@ def calculator(x, y, operator):
     :return: результат операции или None, если операция не выполнима
     '''
 
-    if x is None or y is None: return None
+    if x is None or y is None:
+        return None
 
     try:
         x = float(x)

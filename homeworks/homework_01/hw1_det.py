@@ -41,7 +41,8 @@ def get_minor_i(i, matrix):
     Получить минор и число, которое умножается на минор
     :param i: индекс числа из первой строки массива
     :param matrix: - список списков
-    :return: (elem, list), где elem - число, для умножения с минором, list - минор размера (n - 1)
+    :return: (elem, list), где elem - число, для умножения
+    с минором, list - минор размера (n - 1)
     '''
     dim = len(matrix)
     elem = (-1) ** i * matrix[0][i]
@@ -65,10 +66,3 @@ def is_valid_determinant(matrix):
             return False
     return True
 
-# print(is_valid_determinant([[1, 3], [2], [2]]))
-# a = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
-# c = [[1, 2], [3, 4]]
-# print(get_minor_i(0, a))
-# b = [[1, 2, 3, 4], [5, 6, 55, 8], [9, 10, 11, 12], [13, 14, 15, 18]]
-# print(get_minor_i(2, b))
-# print(calculate_determinant(b))
