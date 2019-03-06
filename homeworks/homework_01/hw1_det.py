@@ -65,4 +65,3 @@ def is_valid_determinant(matrix):
         if len(array) != dim:
             return False
     return True
-
