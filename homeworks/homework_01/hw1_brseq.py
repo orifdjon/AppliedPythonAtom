@@ -10,4 +10,21 @@ def is_bracket_correct(input_string):
     :param input_string: строка, содержащая 6 типов скобок (,),[,],{,}
     :return: True or False
     '''
-    raise NotImplementedError
+    if len(input_string) % 2 != 0:
+        return False
+    stack = []
+    for elem in input_string:
+        if elem == '(' or elem == '[' or elem == '{':
+            stack.append(elem)
+        else:
+            pair_brack = {
+                ')': '(',
+                '}': '{',
+                ']': '['
+            }[elem]
+            try:
+                if pair_brack != stack.pop():
+                    return False
+            except IndexError:
+                return False
+    return True

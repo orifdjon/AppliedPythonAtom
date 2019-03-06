@@ -14,7 +14,6 @@ def calculator(x: "First argument",
     if operator == "divide":
         if y != 0:
             return x / y
-        return x / y
     if operator == "power":
         return x ^ y
     return None
