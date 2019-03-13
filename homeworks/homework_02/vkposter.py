@@ -9,14 +9,10 @@ class VKPoster:
 
     def __init__(self):
         # user_act = {user_id: (added_posts, follows)}
-        self.user_actions: {
-            int: (list, list)
-        } = {}
+        self.user_actions = {}
 
         # post_reads = {post_id: set_of_user)
-        self.post_reads: {
-            int: set
-        } = {}
+        self.post_reads = {}
 
         self._added = 0
         self._follows = 1
