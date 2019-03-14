@@ -19,19 +19,19 @@ def is_tsv(file: str) -> bool:
         data = []
         for row in list(csv.DictReader(f, dialect='excel-tab')):
             data.append(row)
-    if len(data) != 0:
-        return True
-    raise ValueError
+    if len(data) == 0:
+        raise ValueError
+    return True
 
 
-def is_json(file: str)-> bool:
+def is_json(file: str) -> bool:
     try:
-        enc = def_enc(file)
+        enc = defineEnc(file)
         with open(file, 'r', encoding=enc) as f:
             data = json.load(f)
-            if len(data) != 0:
-                return True
+        if len(data) == 0:
             raise ValueError
+        return True
     except json.JSONDecodeError:
         return False
 
