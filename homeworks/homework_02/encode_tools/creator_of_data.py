@@ -25,4 +25,3 @@ def to_comfort_format(data):
     for i in data:
         list_of_val.append(list(i.values()))
     return list(hat), list_of_val
-

@@ -24,4 +24,3 @@ if __name__ == '__main__':
         print('Файл не найден')
     except (UnicodeError, UnicodeDecodeError) or ValueError:
         print('Данные не валидны')
-
