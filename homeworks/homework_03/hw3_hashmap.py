@@ -7,25 +7,20 @@ class HashMap:
     Давайте сделаем все объектненько,
      поэтому внутри хешмапы у нас будет Entry
     '''
+
     class Entry:
         def __init__(self, key, value):
-            '''
-            Сущность, которая хранит пары ключ-значение
-            :param key: ключ
-            :param value: значение
-            '''
+            self.__key = key
+            self.__value = value
 
         def get_key(self):
-            # TODO возвращаем ключ
-            raise NotImplementedError
+            return self.__key
 
         def get_value(self):
-            # TODO возвращаем значение
-            raise NotImplementedError
+            return self.__value
 
         def __eq__(self, other):
-            # TODO реализовать функцию сравнения
-            raise NotImplementedError
+            return self.__value == other.__value
 
     def __init__(self, bucket_num=64):
         '''
@@ -33,29 +28,55 @@ class HashMap:
         :param bucket_num: число бакетов при инициализации
         '''
         raise NotImplementedError
+        self.__arr: [Entry] = [None] * bucket_num
+        self.__bucket_num = bucket_num
+        self.__size = 0
 
     def get(self, key, default_value=None):
-        # TODO метод get, возвращающий значение,
-        #  если оно присутствует, иначе default_value
         raise NotImplementedError
+        hash_key = key.__hash__()
+        bucket = self.__arr[self.__bucket_num % hash_key]
+        if bucket is not None:
+            return bucket
+        return default_value
 
     def put(self, key, value):
         # TODO метод put, кладет значение по ключу,
         #  в случае, если ключ уже присутствует он его заменяет
         raise NotImplementedError
+        hash_key = key.__hash__()
+        bucket = self.__arr[self.__bucket_num % hash_key]
+        if bucket is None:
+            self.__arr[self.__bucket_num % hash_key] = [Entry(key, value)]
+            self.__size += 1
+        else:
+            len_of_bucket = len(bucket)
+            count = 0
+            for entry in bucket:
+                if count < len_of_bucket:
+                    if entry.__key == key:
+                        entry.__value = value
+                    else:
+                        bucket.append(Entry(key, value))
+                        self.__size += 1
+                    count += 1
 
     def __len__(self):
-        # TODO Возвращает количество Entry в массиве
         raise NotImplementedError
+        return self.__size
 
     def _get_hash(self, key):
         # TODO Вернуть хеш от ключа,
         #  по которому он кладется в бакет
         raise NotImplementedError
+        return key.__hash__()
 
     def _get_index(self, hash_value):
         # TODO По значению хеша вернуть индекс элемента в массиве
         raise NotImplementedError
+        tmp = self.__bucket_num % hash_value
+        return tmp
+
 
     def values(self):
         # TODO Должен возвращать итератор значений
