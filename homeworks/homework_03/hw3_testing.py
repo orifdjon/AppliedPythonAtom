@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
+import shutil
+import os
 
 
 class Requester:
@@ -7,6 +9,7 @@ class Requester:
     Какой-то класс, который умеет делать запросы
      к удаленному серверу
     '''
+
     def get(self, host, port, filename):
         return "Fail"
 
@@ -18,6 +21,7 @@ class RemoteFileReader(Requester):
     '''
     Класс для работы с файлами на удаленном сервере
     '''
+
     def __init__(self, host, port):
         self._host = host
         self._port = port
@@ -29,21 +33,45 @@ class RemoteFileReader(Requester):
         return super().post(self._host, self._port, filename, data)
 
 
+class LocalFileReader(RemoteFileReader):
+    '''
+    Класс для работы с локальными файлами
+    '''
+
+    def __init__(self):
+        try:
+            os.mkdir("./tmpf")
+        except FileExistsError as e:
+            pass
+
+    def __del__(self):
+        shutil.rmtree("./tmpf")
+
+    def write_file(self, filename, data):
+        with open('./tmpf/' + filename + ".tmp", "w") as f:
+            f.writelines(data)
+
+    def read_file(self, filename):
+        with open('./homeworks/homework_03/test_dir/' + filename + ".tmp", 'r') as f:
+            return f.readline()
+
+
 class OrdinaryFileWorker(RemoteFileReader):
     '''
     Класс, который работает как с локальными
      так и с удаленными файлами
     '''
+
     def transfer_to_remote(self, filename):
-        with open(filename, "r") as f:
+        with open("./homeworks/homework_03/test_dir/" + filename, "r") as f:
             super().write_file(filename, f.readlines())
 
     def transfer_to_local(self, filename):
-        with open(filename, "w") as f:
+        with open('./tmpf/' + filename, "w") as f:
             f.write(super().read_file(filename))
 
 
-class MockOrdinaryFileWorker(OrdinaryFileWorker):
+class MockOrdinaryFileWorker(OrdinaryFileWorker, LocalFileReader):
     '''
     Необходимо отнаследовать данный класс так, чтобы
      он вместо запросов на удаленный сервер:
@@ -57,8 +85,7 @@ class MockOrdinaryFileWorker(OrdinaryFileWorker):
       при создании объекта, директория ./tmp должна создаваться
      если еще не создана
     '''
-    def __init__(self):
-        raise NotImplementedError
+    pass
 
 
 class LLNode:
