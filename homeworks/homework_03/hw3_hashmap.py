@@ -10,94 +10,137 @@ class HashMap:
 
     class Entry:
         def __init__(self, key, value):
-            self.__key = key
-            self.__value = value
+            self._key = key
+            self._value = value
 
         def get_key(self):
-            return self.__key
+            return self._key
 
         def get_value(self):
-            return self.__value
+            return self._value
 
         def __eq__(self, other):
-            return self.__value == other.__value
+            return self._key == other.get_key()
 
-    def __init__(self, bucket_num=64):
+        def __str__(self):
+            return 'key={}, value={}'.format(self._key, self._value)
+
+        def __repr__(self):
+            return '({},{})'.format(self._key, self._value)
+
+    def __init__(self, bucket_num=64, load_factory=0.75):
         '''
         Реализуем метод цепочек
         :param bucket_num: число бакетов при инициализации
         '''
-        raise NotImplementedError
-        self.__arr: [Entry] = [None] * bucket_num
-        self.__bucket_num = bucket_num
+        self.__table = [None] * bucket_num
+        self.__capacity = bucket_num
+        self.__threshold = int(self.__capacity * load_factory)
         self.__size = 0
 
     def get(self, key, default_value=None):
-        raise NotImplementedError
-        hash_key = key.__hash__()
-        bucket = self.__arr[self.__bucket_num % hash_key]
+        hash_value = key.__hash__()
+        bucket = self.__table[self._get_index(hash_value)]
         if bucket is not None:
-            return bucket
+            for entry in bucket:
+                if entry.get_key() == key:
+                    return entry.get_value()
         return default_value
 
     def put(self, key, value):
         # TODO метод put, кладет значение по ключу,
         #  в случае, если ключ уже присутствует он его заменяет
-        raise NotImplementedError
-        hash_key = key.__hash__()
-        bucket = self.__arr[self.__bucket_num % hash_key]
+        if self.__size >= self.__threshold:
+            self._resize()
+        self.__size = self.__put_in_specific_table(key, value, self.__table, self.__size)
+
+    def __put_in_specific_table(self, key, value, table, size):
+        hash_value = key.__hash__()
+        bucket = table[self._get_index(hash_value)]
         if bucket is None:
-            self.__arr[self.__bucket_num % hash_key] = [Entry(key, value)]
-            self.__size += 1
+            table[self._get_index(hash_value)] = [self.Entry(key, value)]
+            size += 1
         else:
-            len_of_bucket = len(bucket)
-            count = 0
             for entry in bucket:
-                if count < len_of_bucket:
-                    if entry.__key == key:
-                        entry.__value = value
-                    else:
-                        bucket.append(Entry(key, value))
-                        self.__size += 1
-                    count += 1
+                if entry.get_key() == key:
+                    entry._value = value
+                    return size
+            bucket.append(self.Entry(key, value))
+            size += 1
+        return size
 
     def __len__(self):
-        raise NotImplementedError
         return self.__size
 
     def _get_hash(self, key):
         # TODO Вернуть хеш от ключа,
         #  по которому он кладется в бакет
-        raise NotImplementedError
         return key.__hash__()
 
     def _get_index(self, hash_value):
         # TODO По значению хеша вернуть индекс элемента в массиве
-        raise NotImplementedError
-        tmp = self.__bucket_num % hash_value
-        return tmp
-
+        return hash_value % self.__capacity
 
     def values(self):
         # TODO Должен возвращать итератор значений
-        raise NotImplementedError
+        values = []
+        for bucket in self.__table:
+            if bucket is not None:
+                for entry in bucket:
+                    values += [entry.get_value()]
+        return values
 
     def keys(self):
         # TODO Должен возвращать итератор ключей
-        raise NotImplementedError
+        keys = []
+        for bucket in self.__table:
+            if bucket is not None:
+                for entry in bucket:
+                    keys += [entry.get_key()]
+        return keys
 
     def items(self):
         # TODO Должен возвращать итератор пар ключ и значение (tuples)
-        raise NotImplementedError
+        items = []
+        for i in range(len(self.__table)):
+            if self.__table[i] is not None:
+                for entry in self.__table[i]:
+                    items += [(entry.get_key(), entry.get_value())]
+        return items
 
     def _resize(self):
         # TODO Время от времени нужно ресайзить нашу хешмапу
-        raise NotImplementedError
+        new_table = [None] * self.__capacity * 2
+        self.__threshold *= 2
+        self._transfer(new_table)
+        self.__table = new_table
+
+    def _transfer(self, new_table):
+        self.__size = 0
+        for key, val in self.items():
+            self.__size = self.__put_in_specific_table(key, val, new_table, self.__size)
 
     def __str__(self):
         # TODO Метод выводит "buckets: {}, items: {}"
-        raise NotImplementedError
+        string = ''
+        for k, v in self.items():
+            string += str(k) + ': ' + str(v) + ', \n'
+        return string
 
     def __contains__(self, item):
         # TODO Метод проверяющий есть ли объект (через in)
-        raise NotImplementedError
+        if self.get(item) is None:
+            return False
+        return True
+
+
+hashmap = HashMap(10)
+entries = [(5, 7), ("entries", 56), ("value", 54.), (1000, "t"), (HashMap(10), ())]
+for k, v in entries:
+    hashmap.put(k, v)
+print(len(hashmap))
+for k, v in entries:
+    hashmap.put(k, v)
+assert len(hashmap) == 5
+# for k, v in entries:
+#     assert k in hashmap
