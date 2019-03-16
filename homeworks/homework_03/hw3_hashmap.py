@@ -48,8 +48,6 @@ class HashMap:
         return default_value
 
     def put(self, key, value):
-        # TODO метод put, кладет значение по ключу,
-        #  в случае, если ключ уже присутствует он его заменяет
         if self.__size >= self.__threshold:
             self._resize()
         self.__size = self.__put_in_specific_table(key, value, self.__table, self.__size)
@@ -73,16 +71,12 @@ class HashMap:
         return self.__size
 
     def _get_hash(self, key):
-        # TODO Вернуть хеш от ключа,
-        #  по которому он кладется в бакет
         return key.__hash__()
 
     def _get_index(self, hash_value):
-        # TODO По значению хеша вернуть индекс элемента в массиве
         return hash_value % self.__capacity
 
     def values(self):
-        # TODO Должен возвращать итератор значений
         values = []
         for bucket in self.__table:
             if bucket is not None:
@@ -91,7 +85,6 @@ class HashMap:
         return values
 
     def keys(self):
-        # TODO Должен возвращать итератор ключей
         keys = []
         for bucket in self.__table:
             if bucket is not None:
@@ -100,7 +93,6 @@ class HashMap:
         return keys
 
     def items(self):
-        # TODO Должен возвращать итератор пар ключ и значение (tuples)
         items = []
         for i in range(len(self.__table)):
             if self.__table[i] is not None:
@@ -109,7 +101,6 @@ class HashMap:
         return items
 
     def _resize(self):
-        # TODO Время от времени нужно ресайзить нашу хешмапу
         new_table = [None] * self.__capacity * 2
         self.__threshold *= 2
         self._transfer(new_table)
@@ -121,26 +112,18 @@ class HashMap:
             self.__size = self.__put_in_specific_table(key, val, new_table, self.__size)
 
     def __str__(self):
-        # TODO Метод выводит "buckets: {}, items: {}"
         string = ''
         for k, v in self.items():
             string += str(k) + ': ' + str(v) + ', \n'
         return string
 
+    def __repr__(self):
+        string = '{'
+        for k, v in self.items():
+            string += str(k) + ': ' + str(v) + ', '
+        return string + "}"
+
     def __contains__(self, item):
-        # TODO Метод проверяющий есть ли объект (через in)
         if self.get(item) is None:
             return False
         return True
-
-
-hashmap = HashMap(10)
-entries = [(5, 7), ("entries", 56), ("value", 54.), (1000, "t"), (HashMap(10), ())]
-for k, v in entries:
-    hashmap.put(k, v)
-print(len(hashmap))
-for k, v in entries:
-    hashmap.put(k, v)
-assert len(hashmap) == 5
-# for k, v in entries:
-#     assert k in hashmap
