@@ -32,7 +32,11 @@ class TEventStats:
         count_of_people = 0
         for user, _time in self.activity_cash.items():
             if _time[0] <= time:
-                count_act = len(list(filter(lambda x: time - self.FIVE_MIN < x <= time, _time)))
+                count_act = len(list(
+                    filter(
+                        lambda x: time - self.FIVE_MIN < x <= time, _time
+                    )
+                ))
                 if count_act == count:
                     count_of_people += 1
         return count_of_people
